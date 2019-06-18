@@ -2,90 +2,117 @@ package TicketMachine;
 
 import java.util.Scanner;
 
-public class Machine {
+class Machine {
 
-    private double moneyCapacity = 200;
-    Tickets mPriceForTicket;
+    private double mMoneyCapacity = 200;
+    private double mInsertedMoneyForTicket;
+    private Tickets mPriceForTicket;
 
-    Scanner sc = new Scanner(System.in);
+    private Scanner sc = new Scanner(System.in);
 
-    public Tickets getmPriceForTicket() {
+    private void setmInsertedMoneyForTicket(double mInsertedMoneyForTicket) {
+        this.mInsertedMoneyForTicket = mInsertedMoneyForTicket;
+    }
+
+    private double getmInsertedMoneyForTicket() {
+        return mInsertedMoneyForTicket;
+    }
+
+    private Tickets getmPriceForTicket() {
         return mPriceForTicket;
     }
 
-    public void setmPriceForTicket(Tickets mPriceForTicket) {
+    private void setmPriceForTicket(Tickets mPriceForTicket) {
         this.mPriceForTicket = mPriceForTicket;
     }
 
-    public double getMoneyCapacity() {
-        return moneyCapacity;
+    private boolean isMoneyInTheMachine(double mMoneyCapacity) {
+        if (mMoneyCapacity < getmMoneyCapacity()) {
+            System.out.println("machine don't have enough money to give change");
+            return false;
+        } else {
+            this.mMoneyCapacity = mMoneyCapacity;
+            return true;
+        }
     }
 
-    public void setMoneyCapacity(double moneyCapacity) {
-        if (moneyCapacity > 0) {
-            this.moneyCapacity = moneyCapacity;
-        } else {
-            System.out.println("error");
-        }
+    private double getmMoneyCapacity() {
+        return mMoneyCapacity;
     }
 
     void startSystem() {
         printTicketOptions();
         userChoice(sc.next());
-        getMoneyForTicket();
-    }
-
-    void getMoneyForTicket() {
-        System.out.println("insert money: ");
-        double moneyForTicket = sc.nextDouble();
-        if (moneyForTicket == getmPriceForTicket().price) {
+        if (getMoneyForTicket()) {
             printTicket(getmPriceForTicket());
         }
     }
 
-    void printTicket(Tickets ticket) {
-        System.out.println("Here is your ticket!!");
-        ticket.pictureOfTicket(ticket.price);
+    private void returnChange(double insetedMoney) {
+        double change = getmPriceForTicket().price - insetedMoney;
+        if (isMoneyInTheMachine(getmMoneyCapacity() - change)) {
+            System.out.println("your change: " + Math.abs(change));
+        }
     }
 
-    void printPriceForTicket(Tickets ticket) {
+    private boolean getMoneyForTicket() {
+        System.out.println("insert money: ");
+        setmInsertedMoneyForTicket(sc.nextDouble());
+        if (getmInsertedMoneyForTicket() == getmPriceForTicket().price) {
+            return true;
+        } else if (getmInsertedMoneyForTicket() > getmPriceForTicket().price) {
+            returnChange(getmInsertedMoneyForTicket());
+            return true;
+        } else {
+            System.out.println("inserted money insufficient");
+            return false;
+        }
+    }
+
+    private void printPriceForTicket(Tickets ticket) {
         System.out.println("to pay: " + ticket.price);
     }
 
-    Tickets userChoice(String ticket) {
+    private void userChoice(String ticket) {
         switch (ticket) {
             case "normal20":
                 printPriceForTicket(Tickets.NORMAL20);
-                this.mPriceForTicket = Tickets.NORMAL20;
+                setmPriceForTicket(Tickets.NORMAL20);
                 break;
 
             case "normal60":
                 printPriceForTicket(Tickets.NORMAL60);
+                setmPriceForTicket(Tickets.NORMAL60);
                 break;
 
             case "half20":
                 printPriceForTicket(Tickets.HALF20);
+                this.mPriceForTicket = Tickets.HALF20;
                 break;
 
             case "half60":
                 printPriceForTicket(Tickets.HALF60);
+                setmPriceForTicket(Tickets.HALF60);
                 break;
 
             default:
                 System.out.println("wrong selection, try again.");
                 userChoice(sc.next());
         }
-        return null;
     }
 
-    void printTicketOptions() {
+    private void printTicket(Tickets ticket) {
+        System.out.println("Here is your ticket!!");
+        ticket.pictureOfTicket(ticket.price);
+    }
+
+    private void printTicketOptions() {
         System.out.println(
                 "Choose your ticket:\n" +
                         "- normal20\n" +
                         "- normal60\n" +
                         "- half20\n" +
                         "- half60");
-
     }
 }
 
