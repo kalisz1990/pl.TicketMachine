@@ -6,7 +6,7 @@ public enum Tickets {
 
     double price;
 
-    Tickets(int price) {
+    Tickets(double price) {
         this.price = price;
     }
 
